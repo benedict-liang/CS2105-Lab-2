@@ -47,7 +47,8 @@ class RDTSender {
 
 			//sequence number should be the same as the sent data packet
 			if (ackNumber != seqNumber) {
-				udt.send(p);
+				//should wait for timeout
+				//udt.send(p);
 			}
 			else {
 				notSentSuccessfully = false;

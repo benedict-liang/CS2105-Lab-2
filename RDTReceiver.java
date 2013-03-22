@@ -32,10 +32,17 @@ class RDTReceiver {
 	byte[] recv() throws IOException, ClassNotFoundException
 	{
 		DataPacket p = udt.recv();
+		int ackSeqNum = p.seq;
 
-        // send ACK
-		AckPacket ack = new AckPacket(p.seq);
-		udt.send(ack);
+		while (p.isCorrupted) {
+			// send ACK
+			ackSeqNum = (ackSeqNum + 1) % 2;
+			AckPacket ack = new AckPacket(ackSeqNum);
+        	udt.send(ack);
+        }
+
+        AckPacket ack = new AckPacket(ackSeqNum);
+        udt.send(ack);
 
         // deliver data
 		if (p.length > 0) {
