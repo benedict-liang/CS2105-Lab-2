@@ -32,12 +32,30 @@ class RDTSender {
 	 */
 	void send(byte[] data, int length) throws IOException, ClassNotFoundException
 	{
+		//TODO: Include Timeout
         // send packet
 		DataPacket p = new DataPacket(data, length, seqNumber);
 		udt.send(p);
 
-        // receive ACK
-		AckPacket ack = udt.recv();
+		boolean notSentSuccessfully = true;
+
+		while (notSentSuccessfully) {
+			// receive ACK
+			AckPacket ack = udt.recv();
+
+			int ackNumber = ack.ack;
+
+			//sequence number should be the same as the sent data packet
+			if (ackNumber != seqNumber) {
+				udt.send(p);
+			}
+			else {
+				notSentSuccessfully = false;
+			}
+		}
+        
+        seqNumber = (seqNumber + 1) % 2;
+        return;
 	}
 
 	/**
