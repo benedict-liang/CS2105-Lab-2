@@ -1,4 +1,4 @@
-cs2105_assignment_2
-===================
+#CS2105 Lab Assignment 2
+##By Benedict
 
 Second Lab Assignment for CS2105 - Introduction to Computer Networking
