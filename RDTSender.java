@@ -41,7 +41,6 @@ class RDTSender {
 
 		boolean notSentSuccessfully = true;
 
-		//TODO: check for corrupted packet
 		while (notSentSuccessfully) {
 			// receive ACK
 			AckPacket ack = udt.recv();
@@ -64,7 +63,7 @@ class RDTSender {
 	{
 		udt.send(p);
 		//timer.restart();
-        timer.schedule(new SenderTimer(this, p, timer), 0.05*1000);
+        timer.schedule(new SenderTimer(this, p, timer), 50);
 	}
 
 	/**
