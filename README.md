@@ -10,3 +10,18 @@ Alternating-Bit Protocol
 ###Files Edited
 RDTSender.java
 RDTReceiver.java
+
+###Instructions to Run Project
+To start transferring files:
+
+Run FileReceiver:
+
+```
+java FileReceiver <port> <filename>
+```
+ 
+Run FileSender:
+
+```
+java FileSender <filename> <hostname> <port>
+```
