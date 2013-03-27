@@ -32,7 +32,6 @@ class RDTSender {
 	 */
 	void send(byte[] data, int length) throws IOException, ClassNotFoundException
 	{
-		//TODO: Include Timeout
         // send packet
 		DataPacket p = new DataPacket(data, length, seqNumber);
 		Timer timer = new Timer();
@@ -47,14 +46,14 @@ class RDTSender {
 
 			int ackNumber = ack.ack;
 
-			//sequence number should be the same as the sent data packet
+			// sequence number should be the same as the sent data packet
 			if (ackNumber == seqNumber && !ack.isCorrupted) {
 				notSentSuccessfully = false;
 				timer.cancel();
-				System.out.println(length + " sent");
 			}
 		}
-        
+
+        // Update sequence number
         seqNumber = (seqNumber + 1) % 2;
         return;
 	}
@@ -62,7 +61,6 @@ class RDTSender {
 	void sendPacket(DataPacket p, Timer timer) throws IOException, ClassNotFoundException
 	{
 		udt.send(p);
-		//timer.restart();
         timer.schedule(new SenderTimer(this, p, timer), 50);
 	}
 
@@ -104,7 +102,6 @@ class RDTSender {
         } 
 		finally {
 			udt.close();
-			System.out.println("Connection closed");
 		}
 	}
 

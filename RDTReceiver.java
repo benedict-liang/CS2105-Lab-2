@@ -46,8 +46,6 @@ class RDTReceiver {
         udt.send(ack);
         seqNumber = (seqNumber + 1) % 2;
 
-        System.out.println(p.length + " delivered");
-
         // deliver data
 		if (p.length > 0) {
 			byte [] copy = new byte[p.length];
