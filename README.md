@@ -9,4 +9,4 @@ Alternating-Bit Protocol
 
 ###Files Edited
 RDTSender.java
-RDTReceiver.javag
+RDTReceiver.java
