@@ -41,6 +41,7 @@ class RDTSender {
 
 		boolean notSentSuccessfully = true;
 
+		//TODO: check for corrupted packet
 		while (notSentSuccessfully) {
 			// receive ACK
 			AckPacket ack = udt.recv();
@@ -48,9 +49,10 @@ class RDTSender {
 			int ackNumber = ack.ack;
 
 			//sequence number should be the same as the sent data packet
-			if (ackNumber == seqNumber) {
+			if (ackNumber == seqNumber && !ack.isCorrupted) {
 				notSentSuccessfully = false;
 				timer.cancel();
+				System.out.println(length + " sent");
 			}
 		}
         
@@ -62,7 +64,7 @@ class RDTSender {
 	{
 		udt.send(p);
 		//timer.restart();
-        timer.schedule(new SenderTimer(this, p, timer), 1*1000);
+        timer.schedule(new SenderTimer(this, p, timer), 0.05*1000);
 	}
 
 	/**
@@ -81,11 +83,29 @@ class RDTSender {
 		DataPacket p = new DataPacket(null, 0, seqNumber);
 		udt.send(p);
 		try {
-			AckPacket ack = udt.recv();
+			Timer timer = new Timer();
+
+			sendPacket(p, timer);
+
+			boolean notSentSuccessfully = true;
+
+			while (notSentSuccessfully) {
+				// receive ACK
+				AckPacket ack = udt.recv();
+
+				int ackNumber = ack.ack;
+
+				//sequence number should be the same as the sent data packet
+				if (ackNumber == seqNumber) {
+					notSentSuccessfully = false;
+					timer.cancel();
+				}
+			}
 		} catch (EOFException e) {
         } 
 		finally {
 			udt.close();
+			System.out.println("Connection closed");
 		}
 	}
 
