@@ -17,10 +17,12 @@ import java.util.*;
  */
 class RDTReceiver {
 	UDTReceiver udt;
+	int seqNumber;
 
 	RDTReceiver(int port) throws IOException
 	{
 		udt = new UDTReceiver(port);
+		seqNumber = 0;
 	}
 
 	/**
@@ -32,17 +34,19 @@ class RDTReceiver {
 	byte[] recv() throws IOException, ClassNotFoundException
 	{
 		DataPacket p = udt.recv();
-		int ackSeqNum = p.seq;
 
-		while (p.isCorrupted) {
+		while (p.isCorrupted || p.seq != seqNumber) {
 			// send ACK
-			ackSeqNum = (ackSeqNum + 1) % 2;
-			AckPacket ack = new AckPacket(ackSeqNum);
+			AckPacket ack = new AckPacket((seqNumber + 1) % 2);
         	udt.send(ack);
-        }
+        	p = udt.recv();
+		}
 
-        AckPacket ack = new AckPacket(ackSeqNum);
+        AckPacket ack = new AckPacket(p.seq);
         udt.send(ack);
+        seqNumber = (seqNumber + 1) % 2;
+
+        System.out.println(p.length + " delivered");
 
         // deliver data
 		if (p.length > 0) {
